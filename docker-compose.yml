@@ -15,6 +15,8 @@ services:
     restart: always
     ports:
       - ${HTTP_PORT}:8080
+    expose:
+      - "8080"
     depends_on:
       - mariadb
       - redis
@@ -30,6 +32,7 @@ services:
       - OWNCLOUD_MYSQL_UTF8MB4=true
       - OWNCLOUD_REDIS_ENABLED=true
       - OWNCLOUD_REDIS_HOST=redis
+      - VIRTUAL_HOST=${DOMAINS}
     healthcheck:
       test: ["CMD", "/usr/bin/healthcheck"]
       interval: 30s
@@ -68,3 +71,8 @@ services:
       retries: 5
     volumes:
       - redis:/data
+
+networks:
+   default:
+     external:
+       name: ${NETWORK}
