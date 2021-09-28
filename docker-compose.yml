@@ -1,9 +1,9 @@
 version: "3"
 
 volumes:
-  files:
+  media:
     driver: local
-  mysql:
+  mariadb:
     driver: local
   redis:
     driver: local
@@ -13,7 +13,6 @@ services:
     image: owncloud/server:${OWNCLOUD_VERSION}
     container_name: owncloud_server
     restart: always
-    user: ${OS_USER}
     ports:
       - ${HTTP_PORT}:8080
     expose:
@@ -40,7 +39,10 @@ services:
       timeout: 10s
       retries: 5
     volumes:
-      - ./media:/mnt/data
+      # - ./media:/mnt/data
+      - media:/mnt/data
+    labels:
+      - docker-volume-backup.stop-during-backup=service-1
 
   mariadb:
     image: mariadb:10.5
@@ -58,7 +60,9 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - mysql:/var/lib/mysql
+      - mariadb:/var/lib/mysql
+    labels:
+      - docker-volume-backup.stop-during-backup=service-2
 
   redis:
     image: redis:6
@@ -72,6 +76,46 @@ services:
       retries: 5
     volumes:
       - redis:/data
+    labels:
+      - docker-volume-backup.stop-during-backup=service-3
+
+  backup_media: &backup_service
+    image: offen/docker-volume-backup:latest
+    container_name: backup_media
+    restart: always
+    env_file: ./backup.env
+    environment: &backup_environment
+      BACKUP_STOP_CONTAINER_LABEL: service-1
+    volumes:
+      - media:/backup/owncloud-backup:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /media/usb2/service-backups/owncloud:/archive
+
+  backup_mariadb:
+    <<: *backup_service
+    container_name: backup_mariadb
+    restart: always
+    env_file: ./backup.env
+    environment:
+      <<: *backup_environment
+      BACKUP_STOP_CONTAINER_LABEL: service-2
+    volumes:
+      - mariadb:/backup/mariadb-backup:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /media/usb2/service-backups/mariadb:/archive
+
+  backup_redis:
+    <<: *backup_service
+    container_name: backup_redis
+    restart: always
+    env_file: ./backup.env
+    environment:
+      <<: *backup_environment
+      BACKUP_STOP_CONTAINER_LABEL: service-3
+    volumes:
+      - redis:/backup/redis-backup:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /media/usb2/service-backups/redis:/archive
 
 networks:
    default:
