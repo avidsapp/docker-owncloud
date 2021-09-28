@@ -39,7 +39,8 @@ services:
       timeout: 10s
       retries: 5
     volumes:
-      - /media/Data:/mnt/data
+      #- /media/Data:/mnt/data
+      - ./media:/mnt/data
 
   mariadb:
     image: mariadb:10.5
