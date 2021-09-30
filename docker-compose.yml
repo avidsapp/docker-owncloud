@@ -41,6 +41,8 @@ services:
     volumes:
       # - ./media:/mnt/data
       - media:/mnt/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     labels:
       - docker-volume-backup.stop-during-backup=service-1
 
@@ -61,6 +63,8 @@ services:
       retries: 5
     volumes:
       - mariadb:/var/lib/mysql
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     labels:
       - docker-volume-backup.stop-during-backup=service-2
 
@@ -76,6 +80,8 @@ services:
       retries: 5
     volumes:
       - redis:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     labels:
       - docker-volume-backup.stop-during-backup=service-3
 
@@ -90,6 +96,8 @@ services:
       - media:/backup/owncloud-backup:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /media/usb2/service-backups/owncloud:/archive
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
 
   backup_mariadb:
     <<: *backup_service
@@ -103,6 +111,8 @@ services:
       - mariadb:/backup/mariadb-backup:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /media/usb2/service-backups/mariadb:/archive
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
 
   backup_redis:
     <<: *backup_service
@@ -116,6 +126,8 @@ services:
       - redis:/backup/redis-backup:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /media/usb2/service-backups/redis:/archive
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
 
 networks:
    default:
