@@ -95,7 +95,7 @@ services:
     volumes:
       - media:/backup/owncloud-backup:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /media/usb2/service-backups/owncloud:/archive
+      - /media/usb2/backups/owncloud:/archive
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
@@ -110,7 +110,7 @@ services:
     volumes:
       - mariadb:/backup/mariadb-backup:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /media/usb2/service-backups/mariadb:/archive
+      - /media/usb2/backups/mariadb:/archive
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
@@ -125,7 +125,7 @@ services:
     volumes:
       - redis:/backup/redis-backup:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /media/usb2/service-backups/redis:/archive
+      - /media/usb2/backups/redis:/archive
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
